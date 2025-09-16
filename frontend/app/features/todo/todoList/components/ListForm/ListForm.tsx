@@ -30,7 +30,7 @@ const ListForm = ({ onSubmit, initialData }: Props) => {
 
 	return (
 		<FormProvider {...methods}>
-			<form onSubmit={handleFormSubmit} className='flex gap-2'>
+			<form onSubmit={handleFormSubmit} className='flex gap-3 items-center'>
 				<InputField
 					{...register('name', { required: true })}
 					placeholder='Add new list'

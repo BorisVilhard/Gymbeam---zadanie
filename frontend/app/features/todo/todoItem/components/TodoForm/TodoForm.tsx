@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import InputField from '@/app/components/Fields/InputField/InputField';
 import Button from '@/app/components/Button/Button';
-
 import Dropdown from '@/app/components/Dropdown/Dropdown';
 import { TodoProps } from '@/app/types';
 
@@ -20,29 +19,48 @@ const TodoForm = ({ onSubmit, initialData }: Props) => {
 		priority: zod.enum(['high', 'medium', 'low']),
 	});
 
-	const methods = useForm<TodoProps>({
-		defaultValues: initialData || {
-			name: '',
-			completed: false,
-			priority: 'low',
-		},
+	type FormValues = zod.infer<typeof schema>;
+
+	const methods = useForm<FormValues>({
+		defaultValues: initialData
+			? {
+					name: initialData.name,
+					completed: initialData.completed,
+					priority: initialData.priority,
+			  }
+			: {
+					name: '',
+					completed: false,
+					priority: 'low',
+			  },
 		resolver: zodResolver(schema),
 	});
 
 	const { register, handleSubmit, setValue } = methods;
 
-	const priorityOptions = [
+	type PriorityOption = {
+		label: string;
+		value: TodoProps['priority'];
+	};
+
+	const priorityOptions: readonly PriorityOption[] = [
 		{ label: 'High', value: 'high' },
 		{ label: 'Medium', value: 'medium' },
 		{ label: 'Low', value: 'low' },
 	];
 
-	const handlePriorityChange = (value: TodoProps) => {
-		setValue('priority', value.priority, { shouldValidate: true });
+	const handlePriorityChange = (selected: PriorityOption) => {
+		setValue('priority', selected.value, { shouldValidate: true });
 	};
 
 	const handleFormSubmit = handleSubmit((data) => {
-		onSubmit(data);
+		onSubmit({
+			id: initialData?.id || crypto.randomUUID(),
+			name: data.name,
+			completed: data.completed,
+			createdAt: initialData?.createdAt || new Date(),
+			priority: data.priority,
+		});
 		methods.reset();
 	});
 
@@ -53,6 +71,10 @@ const TodoForm = ({ onSubmit, initialData }: Props) => {
 					{...register('name', { required: true })}
 					placeholder='Add new todo'
 				/>
+				<div>
+					<input type='checkbox' {...register('completed')} />
+					<span>Completed</span>
+				</div>
 				<Dropdown
 					name='priority'
 					value={methods.getValues('priority')}

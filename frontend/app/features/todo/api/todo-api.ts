@@ -38,9 +38,9 @@ export const fetchTodos = async (listId: string): Promise<TodoProps[]> => {
 		return response.data;
 	} catch (error) {
 		if (axios.isAxiosError(error) && error.response?.status === 404) {
-			return []; // Return empty array for 404 to show "No data available"
+			return [];
 		}
-		throw error; // Rethrow other errors
+		throw error;
 	}
 };
 

@@ -34,9 +34,8 @@ const ListItem = ({ list, isSelected, onSelect, onDelete, onEdit }: Props) => {
 					type={isCompleted ? 'completed' : 'ongoing'}
 					onClick={handleComplete}
 					disabled={isCompleted}
-					className={isCompleted ? 'bg-green-500 text-white' : ''}
 				>
-					{isCompleted ? 'Completed' : 'Complete'}
+					{isCompleted ? 'Completed' : 'Ongoing'}
 				</Button>
 			</div>
 		</div>

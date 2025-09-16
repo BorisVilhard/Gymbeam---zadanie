@@ -27,10 +27,10 @@ const Button = ({
 			className={classNames(
 				'flex h-[4vh] p-2 rounded-md min-h-[45px] text-white cursor-pointer items-center justify-center transition ease-in-out',
 				{
-					'bg-default': (type === 'edit' || 'default') && !disabled,
+					'bg-primary': type === 'default' && !disabled,
 					'bg-error': type === 'delete' && !disabled,
 					'bg-success': type === 'completed' && !disabled,
-					'bg-onGoing': type === 'ongoing' && !disabled,
+					'bg-warning': type === 'ongoing' && !disabled,
 					'cursor-not-allowed border-neutral bg-neutral': disabled,
 				},
 				className

@@ -4,44 +4,40 @@ import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import Button from '../Button/Button';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
-import { TodoProps } from '@/app/types';
 
-interface Props {
+type Option<T extends string> = { label: string; value: T };
+
+interface Props<T extends string> {
 	name: string;
-	value?: string;
-	items: { label: string; value: string }[];
-	onChange: (value: TodoProps) => void;
+	value?: T;
+	items: readonly Option<T>[];
+	onChange: (selected: Option<T>) => void;
 }
 
-const Dropdown = (props: Props) => {
+const Dropdown = <T extends string>(props: Props<T>) => {
 	const { setValue } = useFormContext();
 	const [isOpen, setIsOpen] = useState(false);
-	const [selectedOption, setSelectedOption] = useState<string>(
+	const [selectedOption, setSelectedOption] = useState<T | ''>(
 		props.value || ''
 	);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		setSelectedOption(props.value || '');
+	}, [props.value]);
 
 	const handleClick = () => {
 		setIsOpen(!isOpen);
 	};
 
 	const handleOptionSelect = (
-		option: { label: string; value: string },
+		option: Option<T>,
 		event: React.MouseEvent<HTMLLIElement, MouseEvent>
 	) => {
 		event.stopPropagation();
 		setSelectedOption(option.value);
 		setIsOpen(false);
-
-		const todo: TodoProps = {
-			id: crypto.randomUUID(),
-			name: '',
-			completed: false,
-			createdAt: new Date(),
-			priority: option.value as 'high' | 'medium' | 'low',
-		};
-
-		props.onChange(todo);
+		props.onChange(option);
 		setValue(props.name, option.value, { shouldValidate: true });
 	};
 
@@ -79,7 +75,7 @@ const Dropdown = (props: Props) => {
 			>
 				<div className='flex items-center gap-[5px]'>
 					{activeOption?.label}
-					{!activeOption && props.items[0].label}
+					{!activeOption && props.items[0]?.label}
 				</div>
 				{isOpen ? (
 					<AiOutlineUp color='white' />
