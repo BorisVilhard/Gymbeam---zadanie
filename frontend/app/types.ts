@@ -18,4 +18,10 @@ export interface ListDataProps {
 export interface TodoDataProps {
 	name: string;
 	completed: boolean;
+	priority?: TodoProps['priority'];
+}
+
+export interface FilterState {
+	completed?: boolean;
+	priority?: TodoProps['priority'];
 }

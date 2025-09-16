@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-	FieldValues,
-	Path,
-	useFormContext,
-	UseFormRegisterReturn,
-} from 'react-hook-form';
+import { FieldValues, Path, useFormContext } from 'react-hook-form';
 import classNames from 'classnames';
 import FieldWrapper from '../FieldWrapper/FieldWrapper';
 
@@ -15,10 +10,11 @@ interface Props<T extends FieldValues> {
 	required?: boolean;
 	disabled?: boolean;
 	type?: string;
+	defaultValue?: string;
+	error?: string;
+	ref?: React.Ref<HTMLInputElement>;
 	onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	register: UseFormRegisterReturn<string>;
-	error?: string;
 }
 
 const InputField = <T extends FieldValues>({
@@ -27,12 +23,14 @@ const InputField = <T extends FieldValues>({
 	placeholder,
 	disabled,
 	type = 'text',
+	defaultValue,
+	error,
+	ref,
 	onKeyDown,
 	onChange,
-	register,
-	error,
 }: Props<T>) => {
 	const {
+		register,
 		formState: { errors },
 	} = useFormContext<T>();
 
@@ -42,12 +40,13 @@ const InputField = <T extends FieldValues>({
 	return (
 		<FieldWrapper label={label} error={fieldError}>
 			<input
-				{...register}
+				{...register(name)}
 				data-qa='input'
 				type={type}
 				onKeyDown={onKeyDown}
 				onChange={(e) => {
-					register.onChange(e);
+					const { onChange: rhfOnChange } = register(name);
+					rhfOnChange(e);
 					onChange?.(e);
 				}}
 				onFocus={(e) => {
@@ -61,6 +60,8 @@ const InputField = <T extends FieldValues>({
 				})}
 				placeholder={placeholder}
 				disabled={disabled}
+				defaultValue={defaultValue}
+				ref={ref}
 			/>
 		</FieldWrapper>
 	);
